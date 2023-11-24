@@ -1,72 +1,131 @@
 .data
-row: .asciiz "|-|-|-|-|-|-|\n"
-numbers1: .asciiz "| 1 | 2 | 3 | 4 | 5 | 6 |\n"
-numbers2: .asciiz "| 7 | 8 | 9 |10|12|14|\n"
-numbers3: .asciiz "|15|16|18|20|21|24|\n"
-numbers4: .asciiz "|25|27|28|30|32|35|\n"
-numbers5: .asciiz "|36|40|42|45|48|59|\n"
-numbers6: .asciiz "|54|56|63|64|72|81|\n"
-    .text
-    .globl main
+array: .space 144    # Space for a 6x6 array of integers (4 bytes each)
+pipe: .asciiz "|"
+newline: .asciiZ "\n"
+
+
+.text
 main:
-    li $t0, 6
-    li $t1, 0  # Index for the numbers
-print_row:
-    beqz $t0, end_print  # Exit loop if $t0 is 0
+    la $t0, array    # Load the address of the array into $t0
 
-    beq $t0, 6, print_numbers1  # Print numbers for the first row
-    beq $t0, 5, print_numbers2  # Print numbers for the second row
-    beq $t0, 4, print_numbers3  # Print numbers for the third row
-    beq $t0, 3, print_numbers4  # Print numbers for the fourth row
-    beq $t0, 2, print_numbers5  # Print numbers for the fifth row
-    beq $t0, 1, print_numbers6  # Print numbers for the sixth row
+    # First row
+    li $t1, 1
+    sw $t1, 0($t0)
+    li $t1, 2
+    sw $t1, 4($t0)
+    li $t1, 3
+    sw $t1, 8($t0)
+    li $t1, 4
+    sw $t1, 12($t0)
+    li $t1, 5
+    sw $t1, 16($t0)
+    li $t1, 6
+    sw $t1, 20($t0)
 
-    la $a0, row
-    li $v0, 4
-    syscall
+    # Second row
+    li $t1, 7
+    sw $t1, 24($t0)
+    li $t1, 8
+    sw $t1, 28($t0)
+    li $t1, 9
+    sw $t1, 32($t0)
+    li $t1, 10
+    sw $t1, 36($t0)
+    li $t1, 12
+    sw $t1, 40($t0)
+    li $t1, 14
+    sw $t1, 44($t0)
 
-    j continue_print
+    # Third row
+    li $t1, 15
+    sw $t1, 48($t0)
+    li $t1, 16
+    sw $t1, 52($t0)
+    li $t1, 18
+    sw $t1, 56($t0)
+    li $t1, 20
+    sw $t1, 60($t0)
+    li $t1, 21
+    sw $t1, 64($t0)
+    li $t1, 24
+    sw $t1, 68($t0)
 
-print_numbers1:
-    la $a0, numbers1
-    li $v0, 4
-    syscall
-    j continue_print
+    # Fourth row
+    li $t1, 25
+    sw $t1, 72($t0)
+    li $t1, 27
+    sw $t1, 76($t0)
+    li $t1, 28
+    sw $t1, 80($t0)
+    li $t1, 30
+    sw $t1, 84($t0)
+    li $t1, 32
+    sw $t1, 88($t0)
+    li $t1, 35
+    sw $t1, 92($t0)
 
-print_numbers2:
-    la $a0, numbers2
-    li $v0, 4
-    syscall
-    j continue_print
+    # Fifth row
+    li $t1, 36
+    sw $t1, 96($t0)
+    li $t1, 40
+    sw $t1, 100($t0)
+    li $t1, 42
+    sw $t1, 104($t0)
+    li $t1, 45
+    sw $t1, 108($t0)
+    li $t1, 48
+    sw $t1, 112($t0)
+    li $t1, 59
+    sw $t1, 116($t0)
 
-print_numbers3:
-    la $a0, numbers3
-    li $v0, 4
-    syscall
-    j continue_print
+    # Sixth row
+    li $t1, 54
+    sw $t1, 120($t0)
+    li $t1, 56
+    sw $t1, 124($t0)
+    li $t1, 63
+    sw $t1, 128($t0)
+    li $t1, 64
+    sw $t1, 132($t0)
+    li $t1, 72
+    sw $t1, 136($t0)
+    li $t1, 81
+    sw $t1, 140($t0)
+    
+    # Print the array
+    li $t2, 0         # Initialize a counter to 0
+    print_loop:
+        # Print a pipe character
+        li $v0, 4        # System call code for print_string
+        la $a0, pipe     # Address of the pipe character
+        syscall          # Print the pipe
 
-print_numbers4:
-    la $a0, numbers4
-    li $v0, 4
-    syscall
-    j continue_print
+        # Print the value
+        lw $a0, 0($t0)   # Load the value at the current offset into $a0
+        li $v0, 1        # System call code for print_int
+        syscall          # Print the integer
 
-print_numbers5:
-    la $a0, numbers5
-    li $v0, 4
-    syscall
-    j continue_print
+        # Check if we need to print a newline
+        addi $t2, $t2, 1 # Increment the counter
+        rem $t3, $t2, 6  # Calculate the remainder when the counter is divided by 6
+        beqz $t3, print_newline # If the remainder is 0, print a newline
+        
+        # Otherwise, continue to the next element
+        addi $t0, $t0, 4 # Increment the offset by 4 (size of an integer)
+        blt $t2, 36, print_loop # If the counter is less than 36 (total number of elements), loop back
 
-print_numbers6:
-    la $a0, numbers6
-    li $v0, 4
-    syscall
-    j continue_print
-
-continue_print:
-    addi $t0, $t0, -1
-    j print_row
-
-end_print:
+    # Exit the program
     li $v0, 10
     syscall
+
+print_newline:
+    # Print a pipe and a newline
+    li $v0, 4        # System call code for print_string
+    la $a0, pipe     # Address of the pipe character
+    syscall          # Print the pipe
+    la $a0, newline  # Address of the newline character
+    syscall          # Print the newline
+
+    # Continue to the next element
+    addi $t0, $t0, 4 # Increment the offset by 4 (size of an integer)
+    blt $t2, 36, print_loop # If the counter is less than 36 (total number of elements), loop back
