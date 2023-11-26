@@ -113,6 +113,16 @@ main:
         # Otherwise, continue to the next element
         addi $t0, $t0, 4 # Increment the offset by 4 (size of an integer)
         blt $t2, 36, print_loop # If the counter is less than 36 (total number of elements), loop back
+        
+    #row = (index / num_columns) + 1
+    #col = (index % num_columns) + 1
+    la $t4, array    # Load the address of the array into $t4
+    li $t5, 7
+    li $t6, 8
+    mult $t7, $t5, $t6
+    div $t7
+    
+    
 
     # Exit the program
     li $v0, 10
