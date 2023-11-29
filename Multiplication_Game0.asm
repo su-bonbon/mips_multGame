@@ -302,7 +302,7 @@ ScorePdecH:
 	bge $s4, 1, ScorePdecH2
 	j ContinueP1
 ScorePdecH2:
-	add $s4, $zero, $zero
+	sub $s4, $s4, 1
 	j ContinueP1
 
 PNextRow:
@@ -337,7 +337,7 @@ ScorePdecV:
 	bge $s4, 1, ScorePdecV2
 	j ContinueP2
 ScorePdecV2:
-	add $s4, $zero, $zero
+	sub $s4, $s4, 1
 	j ContinueP2
 
 PNextColumn:
@@ -356,8 +356,8 @@ ScoreC:
 ScoreCH:
 	lw $s1, Board($s0)
 	add $s0, $s0, 4
-	beq $s1, 88, ScoreCincH
-	bne $s1, 88, ScoreCdecH
+	beq $s1, 111, ScoreCincH
+	bne $s1, 111, ScoreCdecH
 ContinueC1:
 	add $s2, $s2, 1
 	beq $s2, 36, ScoreCV
@@ -374,7 +374,7 @@ ScoreCdecH:
 	bge $s4, 1, ScoreCdecH2
 	j ContinueC1
 ScoreCdecH2:
-	add $s4, $zero, $zero
+	sub $s4, $s4, 1
 	j ContinueC1
 
 CNextRow:
@@ -409,7 +409,7 @@ ScoreCdecV:
 	bge $s4, 1, ScoreCdecV2
 	j ContinueC2
 ScoreCdecV2:
-	add $s4, $zero, $zero
+	sub $s4, $s4, 1
 	j ContinueC2
 
 CNextColumn:
